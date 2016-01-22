@@ -71,6 +71,8 @@ class Site(threading.Thread):
             end = datetime.datetime.now()
             self.status['code'] = r.status_code
             self.status['elapsed'] = end - start
+            # directly transform into seconds
+            self.status['elapsed'].total_seconds()
             match_func = None
             if self.full_match:
                 match_func = re.match

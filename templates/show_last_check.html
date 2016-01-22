@@ -36,7 +36,7 @@
                         {% endif %}
                         {# Elapsed #}
                         {% if site_status['up'] %}
-                            <td>{{ site_status['elapsed'].total_seconds() }}</td>
+                            <td>{{ site_status['elapsed'] }}</td>
                         {% else %}
                             <td></td>
                         {% endif %}
