@@ -136,7 +136,7 @@ Here the `-c=INTERVAL` swicth is defined :
         --version           Show version.
     """
 
-The configuration is then overwrite after it has been read :
+The configuration is then overwritten after it has been read :
 
     # overwrite config with cmdline values
     check_interval_cmdline = cmdline['-c']
