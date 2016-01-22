@@ -23,7 +23,7 @@ Then go to `http://127.0.0.1:5000/`
 ## Read a list of web pages and content from a configuration file
 
 The configuration file `web_monitor.yaml` is parsed at application startup.
-it contains the following data
+it contains the following data :
 
     interval: 10
     sites:
@@ -42,10 +42,10 @@ it contains the following data
 
 ## Periodically make an HTTP request to each site
 
-the class `Monitor` is a dedicated `thread` and has to role to monitor
-each website listed in the configuration file and update their status
+The class `Monitor` is a dedicated `thread` and has to role to monitor
+each website listed in the configuration file and update their status.
 
-The period is simply implemted in the `run` method :
+The period is simply implemented in the `run` method :
 
     def run(self)
         while True:
@@ -118,8 +118,8 @@ very simple to understand :
 
 Here we can notice that we have to use a `deepcopy` of the last status
 global variable to ensure that while we are updating the view, we are not
-referencing the variale that might be updated inside the Monitor.
-We also use a Mutex to protect the `deepcopy`.
+referencing the variable that might be updated inside the Monitor.
+We also used a Mutex to protect the `deepcopy` operation.
 
 ## The checking period must be configurable via a command-line option
 
@@ -143,3 +143,25 @@ The configuration is then overwrite after it has been read :
     if check_interval_cmdline:
         config['check'] = check_interval_cmdline
 
+## The log file must contain the checked URLs, their status and the response times
+
+The following format is printed in the log file :
+
+    {'date': datetime.datetime(2016, 1, 22, 2, 7, 7, 953550),
+     'sites': [{'code': 200,
+                'config_site': {'content': 'f-secure',
+                                'full_match': False,
+                                'url': 'https://www.f-secure.com/'},
+                'elapsed': datetime.timedelta(0, 2, 445137),
+                'error': None,
+                'match': True,
+                'up': True}]}
+
+- `date` : contains the `datetime` just before we began to check websites availability.
+- `sites` : contains the status report for each website
+- `code` : corresponding HTTP status code
+- `config_site` :  a hash describe the website configuration
+- `elasped` the delta between the moment where we started the requested, and the moment when we received the full answer
+- `error` : an error describing a problem at application level that might have happened during the test (`SSLErrorè, `TimeoutError`, `ConnectionError`, ...)
+- `match` : if the content received and the string describing the content in the configuration file have matched
+- `up` : if the website has given a response, and therefore is up
