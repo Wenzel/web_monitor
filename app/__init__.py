@@ -1,5 +1,6 @@
 # Import flask and template operators
 from flask import Flask, render_template
+import threading
 
 # Define the WSGI application object
 app = Flask(__name__)
@@ -22,3 +23,9 @@ from app.mod_webmonitor.controller import mod_webmonitor
 
 # Register blueprint(s)
 app.register_blueprint(mod_webmonitor)
+
+# last status for webmonitor
+last_status = None
+
+# lock last_status
+mutex = threading.Lock()

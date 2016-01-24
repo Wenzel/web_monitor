@@ -30,15 +30,14 @@ from multiprocessing.pool import ThreadPool
 
 # local imports
 from app import app
+from app.mod_webmonitor import mutex
+from app.mod_webmonitor import last_status
 
 LOG_LEVEL = logging.DEBUG
 LOG_FILE = "./web_monitor.log"
 VERSION = 0.1
 CONFIG_PATH = "./web_monitor.yaml"
 TIMEOUT = 30
-
-last_status = None
-mutex = threading.Lock()
 
 def check_website(config_site):
     # assume it's up
@@ -75,6 +74,7 @@ def check_website(config_site):
 def monitor(config):
     logging.debug('monitor')
     global last_status
+    global mutex
     status = {}
     status['date'] = datetime.datetime.now()
     pool = ThreadPool(4)
