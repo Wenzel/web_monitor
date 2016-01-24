@@ -14,7 +14,7 @@ def not_found(error):
 
 # welcome
 @app.route('/')
-def welcome:
+def welcome():
     return render_template('welcome.html')
 
 # Import a module / component using its blueprint handler variable (mod_webmonitor)
