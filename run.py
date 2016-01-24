@@ -28,10 +28,14 @@ import flask
 from apscheduler.schedulers.background import BackgroundScheduler
 from multiprocessing.pool import ThreadPool
 
+# define globals
+import builtins
+builtins.last_status = None
+builtins.mutex = threading.Lock()
+
 # local imports
 from app import app
-from app.mod_webmonitor import mutex
-from app.mod_webmonitor import last_status
+
 
 LOG_LEVEL = logging.DEBUG
 LOG_FILE = "./web_monitor.log"
@@ -42,6 +46,7 @@ TIMEOUT = 30
 def check_website(config_site):
     # assume it's up
     status = {}
+    status['config_site'] = config_site
     status['up'] = True
     status['error'] = None
     status['code'] = None
@@ -73,18 +78,17 @@ def check_website(config_site):
 
 def monitor(config):
     logging.debug('monitor')
-    global last_status
-    global mutex
     status = {}
     status['date'] = datetime.datetime.now()
     pool = ThreadPool(4)
     results = pool.map(check_website, [x[1] for x in config['sites'].items()])
+    status['sites'] = results
     # log results
     logging.info(pprint.pformat(results))
     # update last status
-    mutex.acquire()
-    last_status = status
-    mutex.release()
+    __builtins__.mutex.acquire()
+    __builtins__.last_status = status
+    __builtins__.mutex.release()
 
 def validate_config(config):
     # interval must be present
