@@ -1,4 +1,4 @@
 .idea
 venv
 web_monitor.log
-pycache
+__pycache__
