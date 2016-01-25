@@ -7,7 +7,6 @@ import copy
 mod_webmonitor = Blueprint('web_monitor', __name__, url_prefix='/webmonitor')
 
 import builtins
-print(builtins.mutex)
 @mod_webmonitor.route('/', methods=['GET'])
 def show():
     builtins.mutex.acquire()
