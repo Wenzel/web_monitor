@@ -42,14 +42,26 @@ it contains the following sample data :
 
 ## Periodically make an HTTP request to each site
 
-The function `monitor` has the role to check that every website
+The `monitor` function is periodically called, thank to
+an background job scheduled before `Flask` application starts.
+
+    sched = BackgroundScheduler()
+    sched.add_job(monitor, 'interval', seconds=config['interval'], args=[config])
+    sched.start()
+
+The `monitor` function has to check that every website
 is available and matches the required content, by calling the
 `check_website` function.
 
 It imports `multiprocessing` module to use the `ThreadPool` class,
 so that we can effiently execute multiple checks in parallel.
 
+    pool = ThreadPool(4)
+    results = pool.map(check_website, [x[1] for x in config['sites'].items()])
+
 The results are printed on the log output, using `pformat` to prettify them.
+
+    logging.info(pprint.pformat(results))
 
 A `mutex` is used to ensure that when we update the global variable `last_status`,
 it won't be read by the Flask view code at the same time.
