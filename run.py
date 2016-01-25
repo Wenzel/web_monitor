@@ -60,7 +60,7 @@ def check_website(config_site):
         status['code'] = r.status_code
         status['elapsed'] = end - start
         # directly transform into seconds
-        status['elapsed'].total_seconds()
+        status['elapsed'] = status['elapsed'].total_seconds()
         match_func = None
         if config_site['full_match']:
             match_func = re.match
