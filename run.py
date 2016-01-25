@@ -86,9 +86,9 @@ def monitor(config):
     # log results
     logging.info(pprint.pformat(results))
     # update last status
-    __builtins__.mutex.acquire()
-    __builtins__.last_status = status
-    __builtins__.mutex.release()
+    builtins.mutex.acquire()
+    builtins.last_status = status
+    builtins.mutex.release()
 
 def validate_config(config):
     # interval must be present
