@@ -23,7 +23,7 @@ Then go to `http://127.0.0.1:5000/`
 ## Read a list of web pages and content from a configuration file
 
 The configuration file `web_monitor.yaml` is parsed at application startup.
-it contains the following data :
+it contains the following sample data :
 
     interval: 10
     sites:
@@ -42,15 +42,17 @@ it contains the following data :
 
 ## Periodically make an HTTP request to each site
 
-The class `Monitor` is a dedicated `thread` and has to role to monitor
-each website listed in the configuration file and update their status.
+The function `monitor` has the role to check that every website
+is available and matches the required content, by calling the
+`check_website` function.
 
-The period is simply implemented in the `run` method :
+It imports `multiprocessing` module to use the `ThreadPool` class,
+so that we can effiently execute multiple checks in parallel.
 
-    def run(self)
-        while True:
-            # make requests
-            time.sleep(interval_value)
+The results are printed on the log output, using `pformat` to prettify them.
+
+A `mutex` is used to ensure that when we update the global variable `last_status`,
+it won't be read by the Flask view code at the same time.
 
 ## Verifies that the page content received from the server matches the content requirements
 
@@ -102,24 +104,20 @@ And there we log the new website reported status into the log output, using
 ## Implement a single-page HTTP server interface
 
 We used `Flask` to build this web-server, since it's efficient and remains
-very simple to understand :
+very simple to understand.
 
-    app = flask.Flask(__name__)
-    mutex = threading.Lock()
+Our architecture is splitted into modules :
 
-    @app.route('/')
-    def show_last_check():
-        global last_check
-        mutex.acquire()
-        # make copy of last_check
-        check = copy.deepcopy(last_check)
-        mutex.release()
-        return flask.render_template('show_last_check.html', check=check)
+    app/
+        mod_webmonitor/
+            controller.py
+            [view.py]
+            [model.py]
+        static/
+        templates/
+            webmonitor/
+                show.html
 
-Here we can notice that we have to use a `deepcopy` of the last status
-global variable to ensure that while we are updating the view, we are not
-referencing the variable that might be updated inside the Monitor.
-We also used a Mutex to protect the `deepcopy` operation.
 
 ## The checking period must be configurable via a command-line option
 
